@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Maindab Serverside</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <header>
+        <h1>Maindab Serverside</h1>
+    </header>
+    <main>
+        <div class="container">
+            <textarea id="scriptInput" placeholder="Enter your Lua script here"></textarea>
+            <button id="executeButton">Execute Script</button>
+        </div>
+        <div id="output"></div>
+    </main>
+    <script>
+        document.getElementById('executeButton').addEventListener('click', async () => {
+            const script = document.getElementById('scriptInput').value.trim();
+
+            if (script === '') {
+                alert('Please enter a Lua script to execute.');
+                return;
+            }
+
+            try {
+                const response = await fetch('/execute', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ script })
+                });
+
+                if (!response.ok) {
+                    throw new Error('Failed to execute script.');
+                }
+
+                const result = await response.text();
+                document.getElementById('output').textContent = result;
+            } catch (error) {
+                console.error('Error executing script:', error);
+                document.getElementById('output').textContent = `Error: ${error.message}`;
+            }
+        });
+    </script>
+</body>
+</html>
